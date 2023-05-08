@@ -1,0 +1,1 @@
+# generateSequelize
