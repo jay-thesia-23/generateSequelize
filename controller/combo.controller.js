@@ -66,11 +66,9 @@ const showData = async (req, res) => {
 
     let s = "";
 
-    let len = selectdata[selectdata.length - 1].id;
+    console.log(selectdata, "select.............");
 
-    console.log(len, "lennnn of new");
-
-    for (let i = 0; i < len; i++) {
+    for (let i = 0; i < selectdata.length; i++) {
       let typeSelect = selectdata[i].type;
       let name = selectdata[i].name;
 
@@ -199,6 +197,23 @@ const deleteSelect = async (req, res) => {
   }
 };
 
+const recoverOption = async (req, res) => {
+  const data = await db.Option_master.restore();
+
+  return res.json(data);
+};
+
+const restoreSelect = async (req, res) => {
+  const data = await db.Select_master.restore();
+
+  return res.json(data);
+};
+//edit the form from frontend
+const editForm = async (req, res) => {
+  console.log(req.body, "body");
+  res.render("edit");
+};
+
 module.exports = {
   comboGenerate,
   optionAddPost,
@@ -207,4 +222,7 @@ module.exports = {
   updateSelect,
   deleteOption,
   deleteSelect,
+  recoverOption,
+  restoreSelect,
+  editForm,
 };

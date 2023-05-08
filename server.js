@@ -3,8 +3,11 @@ const combo = require("./router/combo.router");
 const app = express();
 
 app.use(express.json());
+app.set("view engine", "ejs");
 app.use(combo);
 
-app.listen("6000", () => {
-  console.log("app is running on the port 6000");
+const port = "7000";
+
+app.listen(port, () => {
+  console.log(`app is running on the port ${port}`);
 });

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>view form</title>
+  </head>
+  <body>
+    <h1>Create Form</h1>
+
+    <select name="type" id="type" onclick="check()">
+      <option value="">Select your type of value</option>
+      <option value="dropdown">Drop Down</option>
+      <option value="checkbox">Check box</option>
+      <option value="radio">Radio button</option>
+    </select>
+
+    <br />
+    <div id="fields"></div>
+    <br />
+
+    <input type="submit" onclick="submited()" />
+  </body>
+
+  <script>
+    let type = document.getElementById("type");
+    let fields = document.getElementById("fields");
+    let s = "";
+
+    function check() {
+      if (type.value != "") {
+        s += `<input type=text id=""  name="option">
+        <span onclick="addMore()">Add More</span>`;
+      }
+      fields.innerHTML = s;
+      console.log(type.value);
+    }
+
+    let value = ["s"];
+    function addMore() {
+      let texts = document.querySelectorAll("input[type=text]");
+
+      console.log(texts);
+      let curr = "";
+      curr += `<input type=text id="" name="option">
+      <span onclick="addMore()">Add More</span>`;
+
+      fields.innerHTML += curr;
+    }
+
+    fetch("/edit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        values: value,
+      }),
+    }).then(() => {});
+  </script>
+</html>
