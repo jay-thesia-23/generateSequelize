@@ -105,7 +105,6 @@ const showData = async (req, res) => {
   let type = req.body.type;
   let arroption = req.body.optionfield;
   let len = arroption.length || 1;
-  let flag = 0;
 
   if (name != "" && type != "") {
     let pushOption = [];
@@ -119,16 +118,16 @@ const showData = async (req, res) => {
       }
     }
 
-    const addFields = await db.Select_master.create(
-      {
-        name,
-        type,
-        Option_masters: pushOption,
-      },
-      {
-        include: [{ model: db.Option_master }],
-      }
-    );
+    // const addFields = await db.Select_master.create(
+    //   {
+    //     name,
+    //     type,
+    //     Option_masters: pushOption,
+    //   },
+    //   {
+    //     include: [{ model: db.Option_master }],
+    //   }
+    // );
 
     // console.log(addFields);
 
@@ -137,7 +136,7 @@ const showData = async (req, res) => {
   }
 
   try {
-    const { table1, table2 } = await req.body;
+    const { table1, table2 } = req.body;
 
     let s = await selectOptionBoth(table1, table2);
 
