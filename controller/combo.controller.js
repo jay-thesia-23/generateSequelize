@@ -59,46 +59,87 @@ const optionAddPost = async (req, res) => {
   }
 };
 
+async function selectOptionBoth(tabel1, table2) {
+  const selectdata = await db.Select_master.findAll({});
+
+  let s = "";
+
+  for (let i = 0; i < selectdata.length; i++) {
+    let typeSelect = selectdata[i].type;
+    let name = selectdata[i].name;
+
+    const data = await db.Option_master.findAll({
+      where: {
+        selectId: i + 1,
+      },
+    });
+
+    if (typeSelect == "dropdown") {
+      s += `<select name="${name}" id="${name}">
+      <option value="" >Select you ${name}</option>`;
+
+      for (let j = 0; j < data.length; j++) {
+        s += `<option value="">${data[j].name}</option>`;
+      }
+
+      s += ` </select><hr>`;
+    }
+
+    if (typeSelect == "radio" || typeSelect == "checkbox") {
+      for (let j = 0; j < data.length; j++) {
+        s += `<input type="${typeSelect}" name="${typeSelect}" >
+        <label>${data[j].name} </label>`;
+      }
+      s += `<hr>`;
+    }
+  }
+
+  return s;
+}
+
 // show the data to front end
 const showData = async (req, res) => {
-  try {
-    const selectdata = await db.Select_master.findAll({});
+  console.log(req.body, "oofisdjf");
 
-    let s = "";
+  let name = req.body.selectName;
+  let type = req.body.type;
+  let arroption = req.body.optionfield;
+  let len = arroption.length || 1;
+  let flag = 0;
 
-    console.log(selectdata, "select.............");
+  if (name != "" && type != "") {
+    let pushOption = [];
+    for (let i = 0; i < len; i++) {
+      if (arroption[i] != "") {
+        let s = {
+          name: `${arroption[i]}`,
+        };
 
-    for (let i = 0; i < selectdata.length; i++) {
-      let typeSelect = selectdata[i].type;
-      let name = selectdata[i].name;
-
-      const data = await db.Option_master.findAll({
-        where: {
-          selectId: i + 1,
-        },
-      });
-
-      console.log(data, "second table");
-
-      if (typeSelect == "dropdown") {
-        s += `<select name="${name}" id="${name}">
-        <option value="" >Select you ${name}</option>`;
-
-        for (let j = 0; j < data.length; j++) {
-          s += `<option value="">${data[j].name}</option>`;
-        }
-
-        s += ` </select><hr>`;
-      }
-
-      if (typeSelect == "radio") {
-        for (let j = 0; j < data.length; j++) {
-          s += `<input type="${typeSelect}" name="${typeSelect}" >
-          <label>${data[j].name} </label>`;
-        }
-        s += `<hr>`;
+        pushOption.push(s);
       }
     }
+
+    const addFields = await db.Select_master.create(
+      {
+        name,
+        type,
+        Option_masters: pushOption,
+      },
+      {
+        include: [{ model: db.Option_master }],
+      }
+    );
+
+    // console.log(addFields);
+
+    console.log(pushOption, "optionnnnnn");
+    console.log("check");
+  }
+
+  try {
+    const { table1, table2 } = await req.body;
+
+    let s = await selectOptionBoth(table1, table2);
 
     return res.send(s);
   } catch (error) {
@@ -210,8 +251,30 @@ const restoreSelect = async (req, res) => {
 };
 //edit the form from frontend
 const editForm = async (req, res) => {
-  console.log(req.body, "body");
+  console.log(req.body);
   res.render("edit");
+};
+
+const edit = async (req, res) => {
+  console.log(req.body);
+
+  let name = req.body.name;
+  let types = req.body.type;
+  let arroption = req.body.optionfield || 0;
+
+  let pushOption = [];
+  for (let i = 0; i < arroption.length; i++) {
+    let s = `{
+      name:${arroption[i]}
+    }`;
+
+    pushOption.push(s);
+  }
+
+  console.log(pushOption, "optionnnnnn");
+  console.log("check");
+
+  res.json(true);
 };
 
 module.exports = {
@@ -225,4 +288,5 @@ module.exports = {
   recoverOption,
   restoreSelect,
   editForm,
+  edit,
 };

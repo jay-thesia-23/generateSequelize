@@ -1,14 +1,33 @@
 {
   "development": {
-    "username": "root",
-    "password": "root",
-    "database": "generateSequelize",
-    "host": "localhost",
-    "dialect": "mysql"
+    "generateSequelize": {
+      "username": "root",
+      "password": "root",
+      "database": "generateSequelize",
+      "host": "localhost",
+      "dialect": "mysql",
+      "dialectOptions": {
+        "ssl": false,
+        "useUTC": false
+      },
+      "logging": false
+    },
+    "ormDemo": {
+      "username": "root",
+      "password": "root",
+      "database": "ormDemo",
+      "host": "localhost",
+      "dialect": "mysql",
+      "dialectOptions": {
+        "ssl": false,
+        "useUTC": false
+      },
+      "logging": false
+    }
   },
   "test": {
     "username": "root",
-    "password": null,
+    "password": "null",
     "database": "database_test",
     "host": "127.0.0.1",
     "dialect": "mysql"

@@ -9,52 +9,97 @@
   <body>
     <h1>Create Form</h1>
 
-    <select name="type" id="type" onclick="check()">
-      <option value="">Select your type of value</option>
-      <option value="dropdown">Drop Down</option>
-      <option value="checkbox">Check box</option>
-      <option value="radio">Radio button</option>
-    </select>
+    <form action="/show" method="post">
+      <input
+        type="text"
+        placeholder="Enter you select field"
+        name="selectName"
+      />
 
-    <br />
-    <div id="fields"></div>
-    <br />
+      <select name="type" id="type" onclick="addMore()">
+        <option value="">Select your type of value</option>
+        <option value="dropdown">Drop Down</option>
+        <option value="checkbox">Check box</option>
+        <option value="radio">Radio button</option>
+      </select>
 
-    <input type="submit" onclick="submited()" />
+      <span onclick="addMoreSelect()">Add More Select</span>
+      <br />
+      <div id="selects"></div>
+      <br />
+
+      <br />
+      <div id="fields"></div>
+      <br />
+
+      <input type="submit" onclick="submited()" />
+    </form>
   </body>
 
   <script>
     let type = document.getElementById("type");
     let fields = document.getElementById("fields");
-    let s = "";
 
-    function check() {
-      if (type.value != "") {
-        s += `<input type=text id=""  name="option">
-        <span onclick="addMore()">Add More</span>`;
-      }
-      fields.innerHTML = s;
-      console.log(type.value);
+    let curr = "";
+
+    let count = 2;
+    function addMoreSelect() {
+      fetch("/editselect", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((res) => {
+          let selects = document.getElementById("selects");
+
+          let s = ` <input
+        type="text"
+        placeholder="Enter you select field"
+        name="selectName"
+      />
+
+      <select name="type" id="type" onclick="addMore()">
+        <option value="">Select your type of value</option>
+        <option value="dropdown">Drop Down</option>
+        <option value="checkbox">Check box</option>
+        <option value="radio">Radio button</option>
+      </select>
+
+      <span onclick="addMoreSelect()">Add More Select</span>`;
+        });
     }
 
-    let value = ["s"];
     function addMore() {
-      let texts = document.querySelectorAll("input[type=text]");
+      fetch("/edit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((res) => {
+          let texts = document.querySelectorAll("input[type=text]");
 
-      console.log(texts);
-      let curr = "";
-      curr += `<input type=text id="" name="option">
-      <span onclick="addMore()">Add More</span>`;
+          console.log(texts);
 
-      fields.innerHTML += curr;
+          let span = `<span>addMore</span>`;
+
+          const node = document.createElement("input");
+          const node2 = document.createElement("span");
+
+          node2.textContent = "add More";
+          node.setAttribute("type", "text");
+          node2.setAttribute("onclick", "addMore()");
+          node.setAttribute("name", "optionfield");
+          fields.appendChild(node);
+          fields.appendChild(node2);
+
+          // fields.innerHTML = curr;
+        });
     }
-
-    fetch("/edit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        values: value,
-      }),
-    }).then(() => {});
   </script>
 </html>
