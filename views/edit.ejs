@@ -90,6 +90,29 @@
       //   });
     }
 
+    let insides = "";
+    function addMoreInside(tagWhole) {
+      console.log(tagWhole.id);
+
+      let divAppend = document.getElementsByClassName(tagWhole.id);
+
+      console.log(divAppend);
+      insides += ` <input type="text" name="type_2">
+      <span onclick="addMore()" >add More</span>`;
+
+      const node = document.createElement("input");
+      const node2 = document.createElement("span");
+
+      node2.textContent = "add More";
+      node.setAttribute("type", "text");
+      node.setAttribute("name", tagWhole.id);
+      node2.setAttribute("onclick", `addMoreInside(this)`);
+      node2.setAttribute("class", tagWhole.id);
+
+      divAppend[0].appendChild(node);
+      divAppend[0].appendChild(node2);
+    }
+
     function addMore() {
       fetch("/edit", {
         method: "POST",
@@ -113,8 +136,9 @@
           node2.textContent = "add More";
           node.setAttribute("type", "text");
           node.setAttribute("name", `type_${count}`);
-          node2.setAttribute("onclick", "addMore()");
+          node2.setAttribute("onclick", `addMoreInside(this)`);
           node2.setAttribute("class", `fields_${count}`);
+          node2.setAttribute("id", `fields_${count}`);
 
           fieldCurrent.appendChild(node);
           fieldCurrent.appendChild(node2);
