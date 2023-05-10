@@ -1,11 +1,11 @@
 const { sequelize } = require("../models/index");
 const db = require("../models/index");
+const { validationTable } = require("../validator");
 
 //add the data in select master and option master
 const comboGenerate = async (req, res) => {
   const t = await sequelize.transaction();
   const { name, type, optionObject } = req.body;
-
   try {
     const addFields = await db.Select_master.create(
       {
@@ -42,7 +42,7 @@ const comboGenerate = async (req, res) => {
 const optionAddPost = async (req, res) => {
   try {
     const { optionObject } = req.body;
-    console.log(optionObject);
+    console.log(optionObject, "{{{{{{{");
 
     const addData = await db.Option_master.bulkCreate(optionObject);
 
@@ -97,50 +97,81 @@ async function selectOptionBoth(tabel1, table2) {
   return s;
 }
 
-// show the data to front end
+// show the data to front end and also insert to the database
 const showData = async (req, res) => {
   console.log(req.body, "oofisdjf");
 
-  let name = req.body.selectName;
-  let type = req.body.type;
-  let arroption = req.body.optionfield;
-  let len = arroption.length || 1;
+  const { error, value } = validationTable(req.body);
 
-  if (name != "" && type != "") {
-    let pushOption = [];
-    for (let i = 0; i < len; i++) {
-      if (arroption[i] != "") {
-        let s = {
-          name: `${arroption[i]}`,
-        };
-
-        pushOption.push(s);
-      }
-    }
-
-    // const addFields = await db.Select_master.create(
-    //   {
-    //     name,
-    //     type,
-    //     Option_masters: pushOption,
-    //   },
-    //   {
-    //     include: [{ model: db.Option_master }],
-    //   }
-    // );
-
-    // console.log(addFields);
-
-    console.log(pushOption, "optionnnnnn");
-    console.log("check");
+  if (error) {
+    console.log(error.details);
+  } else {
+    console.log(value);
   }
+
+  // let totalKeys = Object.keys(req.body);
+
+  // let totalOfFields = totalKeys.length - 2;
+
+  // let name = req.body.selectName;
+  // let type = req.body.type;
+
+  // if (name.length > 0 && type.length > 0) {
+  //   let len = name.length;
+
+  //   //how many "fields_" means how many select options
+  //   for (let i = 1; i <= totalOfFields; i++) {
+  //     let pushOption = [];
+  //     let fieldName = "fields_" + i;
+  //     let lenOption = 0;
+  //     let valuesOfField = eval("req.body." + fieldName);
+
+  //     let flagOption = Array.isArray(valuesOfField);
+
+  //     //if only one option is given
+  //     if (flagOption == false) {
+  //       let s = {
+  //         name: `${valuesOfField}`,
+  //       };
+  //       pushOption.push(s);
+  //     }
+
+  //     //more than one option get as array
+  //     else {
+  //       lenOption = valuesOfField.length;
+  //     }
+
+  //     //generate the option array of object to pass in "Option_master"
+  //     for (let i = 0; i < lenOption; i++) {
+  //       let s = {
+  //         name: `${valuesOfField[i]}`,
+  //       };
+
+  //       pushOption.push(s);
+  //     }
+
+  //     // add data to the database
+  //     const addFields = await db.Select_master.create(
+  //       {
+  //         name: name[i - 1],
+  //         type: type[i - 1],
+  //         Option_masters: pushOption,
+  //       },
+  //       {
+  //         include: [{ model: db.Option_master }],
+  //       }
+  //     );
+
+  //     console.log(addFields);
+  //   }
+  // }
 
   try {
     const { table1, table2 } = req.body;
 
     let s = await selectOptionBoth(table1, table2);
 
-    return res.send(s);
+    return res.send(error.details[0].message);
   } catch (error) {
     console.log(error);
     return res.status(400).json({
@@ -237,12 +268,14 @@ const deleteSelect = async (req, res) => {
   }
 };
 
+//recover the option
 const recoverOption = async (req, res) => {
   const data = await db.Option_master.restore();
 
   return res.json(data);
 };
 
+//recover the select
 const restoreSelect = async (req, res) => {
   const data = await db.Select_master.restore();
 

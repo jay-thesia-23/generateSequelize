@@ -16,7 +16,7 @@
         name="selectName"
       />
 
-      <select name="type_1" id="type_1" onclick="addMore()">
+      <select name="type" onclick="addMore()">
         <option value="">Select your type of value</option>
         <option value="dropdown">Drop Down</option>
         <option value="checkbox">Check box</option>
@@ -57,11 +57,11 @@
       s = ` <input
     type="text"
     placeholder="Enter you select field"
-    name="type_${count}"
+    name="selectName"
     />
 
-    <select name="type_${countSelect}" id="type_${countSelect}" onclick="addMore()">
-    <option value="">Select your type of value</option>
+    <select name="type" id="type_${countSelect}" onclick="addMore()">
+    <option value="" name="type_${countSelect}">Select your type of value</option>
     <option value="dropdown">Drop Down</option>
     <option value="checkbox">Check box</option>
     <option value="radio">Radio button</option>
@@ -90,43 +90,19 @@
       //   });
     }
 
-    let insides = "";
-    function addMoreInside(tagWhole) {
-      console.log(tagWhole.id);
-
-      let divAppend = document.getElementsByClassName(tagWhole.id);
-
-      console.log(divAppend);
-      insides += ` <input type="text" name="type_2">
-      <span onclick="addMore()" >add More</span>`;
-
-      const node = document.createElement("input");
-      const node2 = document.createElement("span");
-
-      node2.textContent = "add More";
-      node.setAttribute("type", "text");
-      node.setAttribute("name", tagWhole.id);
-      node2.setAttribute("onclick", `addMoreInside(this)`);
-      node2.setAttribute("class", tagWhole.id);
-
-      divAppend[0].appendChild(node);
-      divAppend[0].appendChild(node2);
-    }
-
     function addMore() {
       fetch("/edit", {
         method: "POST",
+
         headers: { "Content-Type": "application/json" },
       })
         .then((res) => {
           return res.json();
         })
         .then((res) => {
-          let texts = document.querySelectorAll("input[type=text]");
+          const currFieldId = "fields_" + count;
 
-          let currFieldId = "fields_" + count;
-
-          console.log(currFieldId, "currentId ");
+          console.log(typeof currFieldId, "currentId ");
           let fieldCurrent = document.getElementById(`${currFieldId}`);
           console.log(fieldCurrent, "currelidfi");
 
@@ -135,18 +111,44 @@
 
           node2.textContent = "add More";
           node.setAttribute("type", "text");
-          node.setAttribute("name", `type_${count}`);
-          node2.setAttribute("onclick", `addMoreInside(this)`);
+          node.setAttribute("name", `fields_${count}`);
+
+          console.log(currFieldId, "currentId76 ");
+          node2.setAttribute("onclick", `addMoreInside('${currFieldId}')`);
           node2.setAttribute("class", `fields_${count}`);
-          node2.setAttribute("id", `fields_${count}`);
 
           fieldCurrent.appendChild(node);
           fieldCurrent.appendChild(node2);
 
           count++;
-
-          // fields.innerHTML = curr;
         });
+    }
+    let insides = "";
+    let i = 0;
+
+    function addMoreInside(id) {
+      let idOption = id;
+
+      let divAppend = document.getElementById(idOption);
+
+      console.log(divAppend, "Div append");
+
+      const node = document.createElement("input");
+      const node2 = document.createElement("span");
+
+      node2.textContent = "add More";
+      node.setAttribute("type", "text");
+      node.setAttribute("name", idOption);
+      node2.setAttribute("onclick", `addMoreInside("${idOption}")`);
+      node2.setAttribute("class", idOption);
+
+      console.log(node);
+      console.log(node2);
+
+      divAppend.appendChild(node);
+      divAppend.appendChild(node2);
+
+      console.log(node2.getAttribute("class"));
     }
   </script>
 </html>
